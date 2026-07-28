@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fichero</title>
+<meta name="theme-color" content="#14180F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fichero">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#14180F;
+  --cajon:#1E2417;
+  --cajon-alto:#2A3220;
+  --papel:#EDE8D8;
+  --tenue:#9AA089;
+  --laton:#C8A24B;
+  --linea:#333B27;
+  --radio:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--tinta);
+  color:var(--papel);
+  font-family:'Lexend','Segoe UI',system-ui,sans-serif;
+  font-weight:300;
+  line-height:1.55;
+  letter-spacing:.005em;
+  min-height:100vh;
+  padding:24px 18px 90px;
+  padding-left:max(18px,env(safe-area-inset-left));
+  padding-right:max(18px,env(safe-area-inset-right));
+}
+.envoltura{max-width:940px;margin:0 auto}
+
+/* ---------- cabecera ---------- */
+.eyebrow{
+  font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--tenue);margin-bottom:6px;
+}
+h1{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:700;font-size:clamp(2rem,7vw,2.9rem);
+  line-height:1;letter-spacing:-.01em;margin-bottom:4px;
+}
+.subtitulo{color:var(--tenue);font-size:.92rem;margin-bottom:22px}
+
+/* ---------- buscador: la ranura ---------- */
+.ranura{
+  position:relative;display:flex;align-items:center;gap:12px;
+  background:var(--cajon);
+  border:1px solid var(--linea);
+  border-top:2px solid var(--laton);
+  border-radius:var(--radio);
+  padding:14px 16px;margin-bottom:14px;
+}
+.ranura svg{flex:none;stroke:var(--laton);opacity:.8}
+#buscar{
+  flex:1;background:none;border:0;outline:none;color:var(--papel);
+  font-family:inherit;font-size:1.05rem;font-weight:400;min-width:0;
+}
+#buscar::placeholder{color:var(--tenue);opacity:.75}
+#contador{flex:none;font-size:.72rem;color:var(--tenue);letter-spacing:.08em;white-space:nowrap}
+.ranura:focus-within{border-color:var(--laton)}
+
+/* ---------- filtros ---------- */
+.filtros{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+.chip{
+  background:transparent;border:1px solid var(--linea);color:var(--tenue);
+  font-family:inherit;font-size:.78rem;font-weight:400;
+  padding:6px 13px;border-radius:100px;cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.chip:hover{color:var(--papel);border-color:var(--tenue)}
+.chip[aria-pressed="true"]{background:var(--cajon-alto);color:var(--papel);border-color:currentColor}
+.punto{width:7px;height:7px;border-radius:50%;flex:none}
+
+/* ---------- accesos fijos ---------- */
+.rapidos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.rapido{
+  flex:1 1 150px;text-align:center;text-decoration:none;
+  background:var(--cajon);border:1px solid var(--linea);border-radius:var(--radio);
+  color:var(--papel);font-size:.85rem;font-weight:400;padding:12px 10px;
+  transition:background .15s,border-color .15s;
+}
+.rapido:hover{background:var(--cajon-alto);border-color:var(--laton)}
+
+/* ---------- los cajones ---------- */
+.grupo{margin-bottom:26px}
+.grupo h2{
+  font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:.95rem;
+  color:var(--tenue);margin-bottom:9px;display:flex;align-items:center;gap:9px;
+}
+.grupo h2::after{content:"";flex:1;height:1px;background:var(--linea)}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:9px}
+
+.cajon{
+  position:relative;display:block;text-decoration:none;color:inherit;
+  background:var(--cajon);
+  border:1px solid var(--linea);
+  border-left:4px solid var(--tono,var(--laton));
+  border-radius:var(--radio);
+  padding:13px 44px 13px 15px;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),background .18s,border-color .18s;
+}
+.cajon:hover,.cajon:focus-visible{
+  transform:translateX(5px);background:var(--cajon-alto);border-color:var(--linea);
+  border-left-color:var(--tono,var(--laton));
+}
+.cajon:focus-visible{outline:2px solid var(--laton);outline-offset:2px}
+.cajon .titulo{font-size:.95rem;font-weight:500;line-height:1.35;margin-bottom:3px}
+.cajon .nota{font-size:.78rem;color:var(--tenue);line-height:1.4}
+/* el tirador */
+.cajon::after{
+  content:"";position:absolute;right:15px;top:50%;transform:translateY(-50%);
+  width:14px;height:4px;border-radius:2px;
+  background:var(--laton);opacity:.35;transition:opacity .18s,width .18s;
+}
+.cajon:hover::after{opacity:.95;width:19px}
+
+.acciones{position:absolute;right:8px;top:8px;display:none;gap:4px}
+body.editando .acciones{display:flex}
+body.editando .cajon{padding-top:34px}
+body.editando .cajon::after{display:none}
+.mini{
+  background:var(--tinta);border:1px solid var(--linea);color:var(--tenue);
+  width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:.8rem;
+  display:grid;place-items:center;font-family:inherit;
+}
+.mini:hover{color:var(--papel);border-color:var(--laton)}
+
+/* ---------- vacío ---------- */
+.vacio{
+  border:1px dashed var(--linea);border-radius:var(--radio);
+  padding:32px 20px;text-align:center;color:var(--tenue);font-size:.9rem;
+}
+
+/* ---------- barra inferior ---------- */
+.barra{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:rgba(20,24,15,.94);backdrop-filter:blur(9px);
+  border-top:1px solid var(--linea);
+  padding:10px 18px calc(10px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+}
+.btn{
+  background:var(--cajon);border:1px solid var(--linea);color:var(--papel);
+  font-family:inherit;font-size:.82rem;font-weight:400;
+  padding:9px 16px;border-radius:100px;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.btn:hover{background:var(--cajon-alto);border-color:var(--laton)}
+.btn.primario{background:var(--laton);color:#14180F;border-color:var(--laton);font-weight:500}
+.btn.primario:hover{filter:brightness(1.12)}
+
+/* ---------- panel ---------- */
+.velo{
+  position:fixed;inset:0;z-index:50;background:rgba(8,10,6,.72);
+  display:none;align-items:flex-end;justify-content:center;padding:0;
+}
+.velo.abierto{display:flex}
+.panel{
+  background:var(--cajon);border:1px solid var(--linea);border-bottom:0;
+  border-radius:14px 14px 0 0;width:100%;max-width:520px;
+  padding:22px 20px calc(22px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow:auto;
+}
+.panel h3{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:1.25rem;margin-bottom:16px}
+label{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue);margin:0 0 5px}
+input[type=text],input[type=url],select,textarea{
+  width:100%;background:var(--tinta);border:1px solid var(--linea);
+  border-radius:6px;color:var(--papel);font-family:inherit;font-size:.95rem;font-weight:300;
+  padding:10px 12px;margin-bottom:14px;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--laton)}
+select{appearance:none}
+.panel-pie{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.aviso{font-size:.78rem;color:var(--tenue);background:var(--tinta);border-left:3px solid var(--laton);padding:9px 12px;border-radius:0 6px 6px 0;margin-bottom:16px;line-height:1.45}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:78px;transform:translateX(-50%) translateY(14px);
+  background:var(--cajon-alto);border:1px solid var(--laton);color:var(--papel);
+  padding:10px 18px;border-radius:100px;font-size:.85rem;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;
+  max-width:90vw;text-align:center;
+}
+#toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:520px){
+  .rejilla{grid-template-columns:1fr}
+  .rapido{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .cajon:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="envoltura">
+  <p class="eyebrow">Claude · acceso directo</p>
+  <h1>Fichero</h1>
+  <p class="subtitulo">Tus conversaciones y artefactos, en un cajón cada uno.</p>
+
+  <div class="ranura">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+    <input id="buscar" type="text" placeholder="Buscar por nombre, nota o categoría…" autocomplete="off" spellcheck="false" aria-label="Buscar en el fichero">
+    <span id="contador"></span>
+  </div>
+
+  <div class="filtros" id="filtros"></div>
+
+  <div class="rapidos">
+    <a class="rapido" href="https://claude.ai/new" target="_blank" rel="noopener">Chat nuevo</a>
+    <a class="rapido" href="https://claude.ai/recents" target="_blank" rel="noopener">Todos los chats</a>
+    <a class="rapido" href="https://claude.ai/projects" target="_blank" rel="noopener">Proyectos</a>
+  </div>
+
+  <div id="lista"></div>
+</div>
+
+<div class="barra">
+  <button class="btn primario" id="btnAnadir">Añadir cajón</button>
+  <button class="btn" id="btnEditar">Editar</button>
+  <button class="btn" id="btnExportar">Guardar copia</button>
+  <button class="btn" id="btnImportar">Restaurar copia</button>
+  <input type="file" id="archivo" accept="application/json,.json" hidden>
+</div>
+
+<div class="velo" id="velo">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitulo">
+    <h3 id="panelTitulo">Añadir cajón</h3>
+    <p class="aviso">Abre la conversación o el artefacto publicado en Claude, copia la dirección de la barra del navegador y pégala aquí.</p>
+    <label for="fUrl">Dirección</label>
+    <input id="fUrl" type="url" placeholder="https://claude.ai/chat/…" autocomplete="off">
+    <label for="fNombre">Nombre</label>
+    <input id="fNombre" type="text" placeholder="Cómo quieres verlo en el cajón" autocomplete="off">
+    <label for="fNota">Nota (opcional)</label>
+    <input id="fNota" type="text" placeholder="Para acordarte de qué hay dentro" autocomplete="off">
+    <label for="fCat">Categoría</label>
+    <select id="fCat"></select>
+    <div class="panel-pie">
+      <button class="btn" id="btnCancelar">Cancelar</button>
+      <button class="btn primario" id="btnGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+var CLAVE = "fichero_nsp_v1";
+
+var CATS = {
+  odoo:      {label:"Odoo y stock",         color:"#6E8CB0"},
+  catalogo:  {label:"Catálogo y marcas",    color:"#86A85E"},
+  estrategia:{label:"Estrategia NSP",       color:"#C8A24B"},
+  marketing: {label:"Marketing y tienda",   color:"#C4763F"},
+  producto:  {label:"Producto y herbolario",color:"#7FA88C"},
+  apps:      {label:"Apps y herramientas",  color:"#9B7BB0"},
+  personal:  {label:"Personal",             color:"#A8A090"},
+  novela:    {label:"Novela e IMPACTO",     color:"#B5566A"},
+  otros:     {label:"Otros",                color:"#7C8570"}
+};
+var ORDEN = ["odoo","catalogo","estrategia","marketing","producto","apps","personal","novela","otros"];
+
+var C = "https://claude.ai/chat/";
+var SEMILLA = [];
+
+/* ---------- estado ---------- */
+var items = [];
+var filtro = null;
+var consulta = "";
+var editando = false;
+var editandoId = null;
+
+/* ---------- utilidades ---------- */
+function id(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function sinTildes(s){
+  return (s||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("visible");
+  clearTimeout(toast._h);
+  toast._h = setTimeout(function(){ t.classList.remove("visible"); }, 2600);
+}
+function guardar(){
+  try{
+    localStorage.setItem(CLAVE, JSON.stringify(items));
+    return true;
+  }catch(e){
+    toast("No se han podido guardar los cambios en este navegador. Usa «Guardar copia».");
+    return false;
+  }
+}
+function cargar(){
+  try{
+    var bruto = localStorage.getItem(CLAVE);
+    if(bruto){
+      var d = JSON.parse(bruto);
+      if(Array.isArray(d) && d.length){ return d; }
+    }
+  }catch(e){}
+  return SEMILLA.map(function(s){
+    return {id:id(), nombre:s.n, url:s.u, cat:s.c, nota:s.t};
+  });
+}
+
+/* ---------- pintado ---------- */
+function pintarFiltros(){
+  var cont = document.getElementById("filtros");
+  cont.textContent = "";
+  var usadas = ORDEN.filter(function(k){
+    return items.some(function(i){ return i.cat === k; });
+  });
+
+  var todos = document.createElement("button");
+  todos.className = "chip";
+  todos.type = "button";
+  todos.textContent = "Todo";
+  todos.setAttribute("aria-pressed", filtro === null ? "true" : "false");
+  todos.onclick = function(){ filtro = null; pintar(); };
+  cont.appendChild(todos);
+
+  usadas.forEach(function(k){
+    var b = document.createElement("button");
+    b.className = "chip";
+    b.type = "button";
+    b.setAttribute("aria-pressed", filtro === k ? "true" : "false");
+    b.style.color = filtro === k ? CATS[k].color : "";
+    var p = document.createElement("span");
+    p.className = "punto";
+    p.style.background = CATS[k].color;
+    b.appendChild(p);
+    b.appendChild(document.createTextNode(CATS[k].label));
+    b.onclick = function(){ filtro = (filtro === k ? null : k); pintar(); };
+    cont.appendChild(b);
+  });
+}
+
+function coincide(it){
+  if(filtro && it.cat !== filtro) return false;
+  if(!consulta) return true;
+  var heno = sinTildes(it.nombre + " " + (it.nota||"") + " " + (CATS[it.cat]||CATS.otros).label);
+  return consulta.split(/\s+/).every(function(p){ return heno.indexOf(p) !== -1; });
+}
+
+function crearCajon(it){
+  var cat = CATS[it.cat] || CATS.otros;
+  var a = document.createElement("a");
+  a.className = "cajon";
+  a.href = it.url;
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.style.setProperty("--tono", cat.color);
+
+  var t = document.createElement("div");
+  t.className = "titulo";
+  t.textContent = it.nombre;
+  a.appendChild(t);
+
+  if(it.nota){
+    var n = document.createElement("div");
+    n.className = "nota";
+    n.textContent = it.nota;
+    a.appendChild(n);
+  }
+
+  var acc = document.createElement("div");
+  acc.className = "acciones";
+
+  var ed = document.createElement("button");
+  ed.className = "mini"; ed.type = "button";
+  ed.textContent = "✎"; ed.title = "Editar"; ed.setAttribute("aria-label","Editar " + it.nombre);
+  ed.onclick = function(e){ e.preventDefault(); e.stopPropagation(); abrirPanel(it); };
+
+  var bo = document.createElement("button");
+  bo.className = "mini"; bo.type = "button";
+  bo.textContent = "✕"; bo.title = "Quitar"; bo.setAttribute("aria-label","Quitar " + it.nombre);
+  bo.onclick = function(e){
+    e.preventDefault(); e.stopPropagation();
+    if(confirm("¿Quitar «" + it.nombre + "» del fichero?")){
+      items = items.filter(function(x){ return x.id !== it.id; });
+      guardar(); pintar(); toast("Cajón quitado");
+    }
+  };
+
+  acc.appendChild(ed); acc.appendChild(bo);
+  a.appendChild(acc);
+  return a;
+}
+
+function pintar(){
+  pintarFiltros();
+  var lista = document.getElementById("lista");
+  lista.textContent = "";
+
+  var visibles = items.filter(coincide);
+  document.getElementById("contador").textContent =
+    visibles.length + (visibles.length === 1 ? " cajón" : " cajones");
+
+  if(!visibles.length){
+    var v = document.createElement("div");
+    v.className = "vacio";
+    v.textContent = consulta
+      ? "Nada con esas palabras. Prueba con menos."
+      : "Fichero vacío. Pulsa «Restaurar copia» abajo y elige tu archivo fichero-datos.json.";
+    lista.appendChild(v);
+    return;
+  }
+
+  ORDEN.forEach(function(k){
+    var dentro = visibles.filter(function(i){ return i.cat === k; });
+    if(!dentro.length) return;
+    var g = document.createElement("section");
+    g.className = "grupo";
+    var h = document.createElement("h2");
+    var p = document.createElement("span");
+    p.className = "punto"; p.style.background = CATS[k].color;
+    h.appendChild(p);
+    h.appendChild(document.createTextNode(CATS[k].label));
+    g.appendChild(h);
+    var r = document.createElement("div");
+    r.className = "rejilla";
+    dentro.forEach(function(it){ r.appendChild(crearCajon(it)); });
+    g.appendChild(r);
+    lista.appendChild(g);
+  });
+}
+
+/* ---------- panel ---------- */
+var velo = document.getElementById("velo");
+
+function llenarSelect(){
+  var s = document.getElementById("fCat");
+  s.textContent = "";
+  ORDEN.forEach(function(k){
+    var o = document.createElement("option");
+    o.value = k; o.textContent = CATS[k].label;
+    s.appendChild(o);
+  });
+}
+
+function abrirPanel(it){
+  editandoId = it ? it.id : null;
+  document.getElementById("panelTitulo").textContent = it ? "Editar cajón" : "Añadir cajón";
+  document.getElementById("fUrl").value = it ? it.url : "";
+  document.getElementById("fNombre").value = it ? it.nombre : "";
+  document.getElementById("fNota").value = it ? (it.nota||"") : "";
+  document.getElementById("fCat").value = it ? it.cat : (filtro || "otros");
+  velo.classList.add("abierto");
+  setTimeout(function(){ document.getElementById(it ? "fNombre" : "fUrl").focus(); }, 60);
+}
+function cerrarPanel(){ velo.classList.remove("abierto"); editandoId = null; }
+
+document.getElementById("btnGuardar").onclick = function(){
+  var url = document.getElementById("fUrl").value.trim();
+  var nombre = document.getElementById("fNombre").value.trim();
+  var nota = document.getElementById("fNota").value.trim();
+  var cat = document.getElementById("fCat").value;
+
+  if(!url){ toast("Falta la dirección"); document.getElementById("fUrl").focus(); return; }
+  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+  if(!nombre) nombre = "Sin nombre";
+
+  if(editandoId){
+    items = items.map(function(x){
+      return x.id === editandoId ? {id:x.id, nombre:nombre, url:url, nota:nota, cat:cat} : x;
+    });
+    toast("Cajón actualizado");
+  }else{
+    items.unshift({id:id(), nombre:nombre, url:url, nota:nota, cat:cat});
+    toast("Cajón añadido");
+  }
+  guardar(); cerrarPanel(); pintar();
+};
+
+document.getElementById("btnCancelar").onclick = cerrarPanel;
+velo.onclick = function(e){ if(e.target === velo) cerrarPanel(); };
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && velo.classList.contains("abierto")) cerrarPanel();
+  if(e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT"){
+    e.preventDefault(); document.getElementById("buscar").focus();
+  }
+});
+
+/* ---------- barra ---------- */
+document.getElementById("btnAnadir").onclick = function(){ abrirPanel(null); };
+
+document.getElementById("btnEditar").onclick = function(){
+  editando = !editando;
+  document.body.classList.toggle("editando", editando);
+  this.textContent = editando ? "Hecho" : "Editar";
+};
+
+document.getElementById("btnExportar").onclick = function(){
+  var blob = new Blob([JSON.stringify(items, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "fichero-" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  toast("Copia guardada en Descargas");
+};
+
+document.getElementById("btnImportar").onclick = function(){
+  document.getElementById("archivo").click();
+};
+document.getElementById("archivo").onchange = function(e){
+  var f = e.target.files[0];
+  if(!f) return;
+  var lector = new FileReader();
+  lector.onload = function(){
+    try{
+      var d = JSON.parse(lector.result);
+      if(!Array.isArray(d)) throw 0;
+      items = d.map(function(x){
+        return {
+          id: x.id || id(),
+          nombre: x.nombre || "Sin nombre",
+          url: x.url || "",
+          nota: x.nota || "",
+          cat: CATS[x.cat] ? x.cat : "otros"
+        };
+      });
+      guardar(); pintar();
+      toast("Copia restaurada · " + items.length + " cajones");
+    }catch(err){
+      toast("Ese archivo no es una copia del fichero.");
+    }
+  };
+  lector.readAsText(f);
+  e.target.value = "";
+};
+
+/* ---------- buscador ---------- */
+var campo = document.getElementById("buscar");
+campo.addEventListener("input", function(){
+  consulta = sinTildes(campo.value.trim());
+  pintar();
+});
+campo.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    var primero = document.querySelector(".cajon");
+    if(primero) window.open(primero.href, "_blank", "noopener");
+  }
+});
+
+/* ---------- arranque ---------- */
+llenarSelect();
+items = cargar();
+guardar();
+pintar();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+
+})();
+</script>
+</body>
+</html>
