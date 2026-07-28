@@ -2,7 +2,7 @@
    Guarda la app en caché para que abra sin conexión y para que Chrome
    la considere instalable como aplicación. */
 
-var CACHE = "fichero-v3";
+var CACHE = "fichero-v4";
 var ARCHIVOS = [
   "./",
   "./index.html",

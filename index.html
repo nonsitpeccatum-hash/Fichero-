@@ -296,6 +296,7 @@ var CLAVE = "fichero_nsp_v1";
 var CLAVE_ESCALA = "fichero_escala";
 var CLAVE_PERSONA = "fichero_persona";
 var CLAVE_LIMPIEZA = "fichero_limpieza_1";
+var CLAVE_MIG2 = "fichero_migracion_2";
 var FUERA = ["88593ff0-63c4-4171-9e4d-2359bac5813a"];
 var ESCALAS = [15, 17, 19.5, 22];
 
@@ -348,7 +349,7 @@ function cargar(){
     var bruto = localStorage.getItem(CLAVE);
     if(bruto){
       var d = JSON.parse(bruto);
-      if(Array.isArray(d) && d.length) return limpiezaUnica(adaptarLista(d));
+      if(Array.isArray(d) && d.length) return migracionDiarios(limpiezaUnica(adaptarLista(d)));
     }
   }catch(e){}
   return [];
@@ -362,6 +363,44 @@ function limpiezaUnica(lista){
   });
   try{ localStorage.setItem(CLAVE_LIMPIEZA, "1"); }catch(e){}
   return filtrada;
+}
+
+/* Los tres artefactos de uso diario: enlace directo al panel del artefacto,
+   sin versionUuid para que abran siempre la última versión. */
+var DIARIOS = [
+  {marca:"4e4b0d38-c2da-489d-a690-96831cb327e1", nombre:"Bitácora",
+   url:"https://claude.ai/chat/4e4b0d38-c2da-489d-a690-96831cb327e1?artifactId=bitacora_nocturna.jsx",
+   nota:"Agenda diaria", cat:"apps"},
+  {marca:"9aa6e7af-9cd4-4562-876e-f91fd3b9e7fa", nombre:"Precios NSP",
+   url:"https://claude.ai/chat/9aa6e7af-9cd4-4562-876e-f91fd3b9e7fa?artifactId=nsp-precios.html",
+   nota:"", cat:"apps"},
+  {marca:"4e558ea9-e922-42dc-8453-641d9eebce03", nombre:"Master IA humano",
+   url:"https://claude.ai/chat/4e558ea9-e922-42dc-8453-641d9eebce03?artifactId=master-ia-humano.html",
+   nota:"", cat:"apps"}
+];
+
+/* Coloca los tres arriba, anclados, y corrige sus enlaces. Se ejecuta una vez. */
+function migracionDiarios(lista){
+  try{ if(localStorage.getItem(CLAVE_MIG2)) return lista; }catch(e){ return lista; }
+  var cabeza = [];
+  DIARIOS.forEach(function(d){
+    var pos = -1;
+    for(var i = 0; i < lista.length; i++){
+      if((lista[i].url || "").indexOf(d.marca) !== -1){ pos = i; break; }
+    }
+    var it;
+    if(pos !== -1){
+      it = lista.splice(pos, 1)[0];
+      it.url = d.url; it.nombre = d.nombre; it.cat = d.cat;
+      if(d.nota) it.nota = d.nota;
+    }else{
+      it = {id:id(), nombre:d.nombre, url:d.url, nota:d.nota, cat:d.cat};
+    }
+    it.fijo = true;
+    cabeza.push(it);
+  });
+  try{ localStorage.setItem(CLAVE_MIG2, "1"); }catch(e){}
+  return cabeza.concat(lista);
 }
 
 /* ---------- saludo ---------- */
